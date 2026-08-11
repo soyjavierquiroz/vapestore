@@ -1,0 +1,31 @@
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Logs and local environment
+*.log
+.env
+.env.*
+
+# WordPress/vendor/generated content must not be committed here
+public_html/
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backup*/
+wp-content/backups/
+node_modules/
+vendor/
+dist/
+build/
+
+# Keep intentionally empty owned-code directories.
+!theme/
+!theme/vapestore/
+!plugins/
+!plugins/vapestore-core/
