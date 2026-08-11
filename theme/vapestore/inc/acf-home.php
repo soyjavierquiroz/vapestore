@@ -131,6 +131,31 @@ if ( function_exists( 'acf_add_local_field_group' ) ) {
 					'name'  => 'home_about_button_label',
 					'type'  => 'text',
 				),
+				array(
+					'key'           => 'field_vapestore_home_promo_image',
+					'label'         => __( 'Promo Image', 'vapestore' ),
+					'name'          => 'home_promo_image',
+					'type'          => 'image',
+					'return_format' => 'id',
+				),
+				array(
+					'key'   => 'field_vapestore_home_promo_title',
+					'label' => __( 'Promo Title', 'vapestore' ),
+					'name'  => 'home_promo_title',
+					'type'  => 'text',
+				),
+				array(
+					'key'   => 'field_vapestore_home_promo_text',
+					'label' => __( 'Promo Text', 'vapestore' ),
+					'name'  => 'home_promo_text',
+					'type'  => 'textarea',
+				),
+				array(
+					'key'   => 'field_vapestore_home_promo_button_label',
+					'label' => __( 'Promo Button Label', 'vapestore' ),
+					'name'  => 'home_promo_button_label',
+					'type'  => 'text',
+				),
 			),
 			'location' => array(
 				array(

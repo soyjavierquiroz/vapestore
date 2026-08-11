@@ -21,6 +21,7 @@ $hero_title           = $hero_title ? $hero_title : __( 'Everything you need, al
 $hero_text            = $hero_text ? $hero_text : __( 'Explore our product selection and shop from a simple, reliable storefront.', 'vapestore' );
 $hero_primary_label   = $hero_primary_label ? $hero_primary_label : __( 'Shop Now', 'vapestore' );
 $hero_secondary_label = $hero_secondary_label ? $hero_secondary_label : __( 'Learn More', 'vapestore' );
+$hero_has_media       = $hero_image_id && wp_attachment_is_image( (int) $hero_image_id );
 
 $shop_url  = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 $about_url = home_url( '/about/' );
@@ -60,17 +61,27 @@ $about_title        = $has_acf ? get_field( 'home_about_title' ) : '';
 $about_text         = $has_acf ? get_field( 'home_about_text' ) : '';
 $about_image_id     = $has_acf ? get_field( 'home_about_image' ) : '';
 $about_button_label = $has_acf ? get_field( 'home_about_button_label' ) : '';
+$promo_image_id     = $has_acf ? get_field( 'home_promo_image' ) : '';
+$promo_title        = $has_acf ? get_field( 'home_promo_title' ) : '';
+$promo_text         = $has_acf ? get_field( 'home_promo_text' ) : '';
+$promo_button_label = $has_acf ? get_field( 'home_promo_button_label' ) : '';
 
 $about_eyebrow      = $about_eyebrow ? $about_eyebrow : __( 'About', 'vapestore' );
 $about_title        = $about_title ? $about_title : __( 'A simple storefront for everyday shopping', 'vapestore' );
 $about_text         = $about_text ? $about_text : __( 'Use this section to introduce the store with clear, editable information for visitors.', 'vapestore' );
 $about_button_label = $about_button_label ? $about_button_label : __( 'About Us', 'vapestore' );
+$about_has_media    = $about_image_id && wp_attachment_is_image( (int) $about_image_id );
+
+$promo_title        = $promo_title ? $promo_title : __( 'Explore what\'s new', 'vapestore' );
+$promo_text         = $promo_text ? $promo_text : __( 'Browse the latest products available in our store.', 'vapestore' );
+$promo_button_label = $promo_button_label ? $promo_button_label : __( 'Shop Now', 'vapestore' );
+$promo_has_media    = $promo_image_id && wp_attachment_is_image( (int) $promo_image_id );
 
 $featured_products = function_exists( 'wc_get_products' )
 	? wc_get_products(
 		array(
 			'featured' => true,
-			'limit'    => 4,
+			'limit'    => 5,
 			'return'   => 'ids',
 			'status'   => 'publish',
 		)
@@ -80,7 +91,7 @@ $featured_products = function_exists( 'wc_get_products' )
 $new_products = function_exists( 'wc_get_products' )
 	? wc_get_products(
 		array(
-			'limit'   => 4,
+			'limit'   => 5,
 			'orderby' => 'date',
 			'order'   => 'DESC',
 			'return'  => 'ids',
@@ -91,7 +102,7 @@ $new_products = function_exists( 'wc_get_products' )
 ?>
 
 <main class="home">
-	<section class="home-hero">
+	<section class="home-hero <?php echo $hero_has_media ? 'home-hero--has-media' : 'home-hero--text-only'; ?>">
 		<div class="container home-hero__inner">
 			<div class="home-hero__content">
 				<p class="home-eyebrow"><?php echo esc_html( $hero_eyebrow ); ?></p>
@@ -102,7 +113,7 @@ $new_products = function_exists( 'wc_get_products' )
 					<a class="button button--secondary" href="<?php echo esc_url( $about_url ); ?>"><?php echo esc_html( $hero_secondary_label ); ?></a>
 				</div>
 			</div>
-			<?php if ( $hero_image_id ) : ?>
+			<?php if ( $hero_has_media ) : ?>
 				<div class="home-hero__media">
 					<?php echo wp_get_attachment_image( (int) $hero_image_id, 'large' ); ?>
 				</div>
@@ -123,7 +134,10 @@ $new_products = function_exists( 'wc_get_products' )
 
 	<section class="home-section home-categories">
 		<div class="container">
-			<h2><?php esc_html_e( 'Shop by Category', 'vapestore' ); ?></h2>
+			<div class="home-section__heading">
+				<h2><?php esc_html_e( 'Shop by Category', 'vapestore' ); ?></h2>
+				<a href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'View All', 'vapestore' ); ?></a>
+			</div>
 			<?php
 			$product_categories = array();
 
@@ -162,26 +176,28 @@ $new_products = function_exists( 'wc_get_products' )
 
 	<section class="home-section home-products">
 		<div class="container">
-			<h2><?php esc_html_e( 'Featured Products', 'vapestore' ); ?></h2>
+			<div class="home-section__heading">
+				<h2><?php esc_html_e( 'Featured Products', 'vapestore' ); ?></h2>
+				<a href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'View All', 'vapestore' ); ?></a>
+			</div>
 			<?php if ( ! empty( $featured_products ) ) : ?>
-				<?php echo do_shortcode( '[featured_products limit="4" columns="4"]' ); ?>
+				<?php echo do_shortcode( '[featured_products limit="5" columns="5"]' ); ?>
 			<?php else : ?>
 				<p class="home-empty"><?php esc_html_e( 'Featured products will appear here.', 'vapestore' ); ?></p>
 			<?php endif; ?>
 		</div>
 	</section>
 
-	<section class="home-about">
-		<div class="container home-about__inner">
-			<div class="home-about__content">
-				<p class="home-eyebrow"><?php echo esc_html( $about_eyebrow ); ?></p>
-				<h2><?php echo esc_html( $about_title ); ?></h2>
-				<p><?php echo esc_html( $about_text ); ?></p>
-				<a class="button button--primary" href="<?php echo esc_url( $about_url ); ?>"><?php echo esc_html( $about_button_label ); ?></a>
+	<section class="home-promo <?php echo $promo_has_media ? 'home-promo--has-media' : 'home-promo--text-only'; ?>">
+		<div class="container home-promo__inner">
+			<div class="home-promo__content">
+				<h2><?php echo esc_html( $promo_title ); ?></h2>
+				<p><?php echo esc_html( $promo_text ); ?></p>
+				<a class="button button--primary" href="<?php echo esc_url( $shop_url ); ?>"><?php echo esc_html( $promo_button_label ); ?></a>
 			</div>
-			<?php if ( $about_image_id ) : ?>
-				<div class="home-about__media">
-					<?php echo wp_get_attachment_image( (int) $about_image_id, 'large' ); ?>
+			<?php if ( $promo_has_media ) : ?>
+				<div class="home-promo__media">
+					<?php echo wp_get_attachment_image( (int) $promo_image_id, 'large' ); ?>
 				</div>
 			<?php endif; ?>
 		</div>
@@ -189,11 +205,30 @@ $new_products = function_exists( 'wc_get_products' )
 
 	<section class="home-section home-products">
 		<div class="container">
-			<h2><?php esc_html_e( 'New Arrivals', 'vapestore' ); ?></h2>
+			<div class="home-section__heading">
+				<h2><?php esc_html_e( 'New Arrivals', 'vapestore' ); ?></h2>
+				<a href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'View All', 'vapestore' ); ?></a>
+			</div>
 			<?php if ( ! empty( $new_products ) ) : ?>
-				<?php echo do_shortcode( '[products limit="4" columns="4" orderby="date" order="DESC"]' ); ?>
+				<?php echo do_shortcode( '[products limit="5" columns="5" orderby="date" order="DESC"]' ); ?>
 			<?php else : ?>
 				<p class="home-empty"><?php esc_html_e( 'New products will appear here.', 'vapestore' ); ?></p>
+			<?php endif; ?>
+		</div>
+	</section>
+
+	<section class="home-about <?php echo $about_has_media ? 'home-about--has-media' : 'home-about--text-only'; ?>">
+		<div class="container home-about__inner">
+			<div class="home-about__content">
+				<p class="home-eyebrow"><?php echo esc_html( $about_eyebrow ); ?></p>
+				<h2><?php echo esc_html( $about_title ); ?></h2>
+				<p><?php echo esc_html( $about_text ); ?></p>
+				<a class="button button--primary" href="<?php echo esc_url( $about_url ); ?>"><?php echo esc_html( $about_button_label ); ?></a>
+			</div>
+			<?php if ( $about_has_media ) : ?>
+				<div class="home-about__media">
+					<?php echo wp_get_attachment_image( (int) $about_image_id, 'large' ); ?>
+				</div>
 			<?php endif; ?>
 		</div>
 	</section>
