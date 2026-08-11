@@ -54,3 +54,33 @@ function vapestore_enqueue_assets() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'vapestore_enqueue_assets' );
+
+/**
+ * Get the current WooCommerce cart item count.
+ *
+ * @return int
+ */
+function vapestore_get_cart_count() {
+	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+		return 0;
+	}
+
+	return (int) WC()->cart->get_cart_contents_count();
+}
+
+/**
+ * Add the header cart count to WooCommerce cart fragments.
+ *
+ * @param array $fragments Cart fragments.
+ * @return array
+ */
+function vapestore_cart_count_fragment( $fragments ) {
+	ob_start();
+	?>
+	<span class="header-cart-count"><?php echo esc_html( vapestore_get_cart_count() ); ?></span>
+	<?php
+	$fragments['.header-cart-count'] = ob_get_clean();
+
+	return $fragments;
+}
+add_filter( 'woocommerce_add_to_cart_fragments', 'vapestore_cart_count_fragment' );
