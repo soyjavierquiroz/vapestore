@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require get_template_directory() . '/inc/acf-home.php';
+
 /**
  * Set up theme support and menus.
  */
