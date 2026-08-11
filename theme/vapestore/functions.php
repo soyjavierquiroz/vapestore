@@ -58,6 +58,39 @@ function vapestore_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'vapestore_enqueue_assets' );
 
 /**
+ * Use simple theme wrappers for WooCommerce screens.
+ */
+function vapestore_woocommerce_wrapper_start() {
+	?>
+	<main class="store-main">
+		<div class="container">
+	<?php
+}
+
+/**
+ * Close theme wrappers for WooCommerce screens.
+ */
+function vapestore_woocommerce_wrapper_end() {
+	?>
+		</div>
+	</main>
+	<?php
+}
+
+/**
+ * Keep WooCommerce content inside the theme layout and remove the default sidebar.
+ */
+function vapestore_woocommerce_layout_hooks() {
+	remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10 );
+	remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10 );
+	remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar', 10 );
+
+	add_action( 'woocommerce_before_main_content', 'vapestore_woocommerce_wrapper_start', 10 );
+	add_action( 'woocommerce_after_main_content', 'vapestore_woocommerce_wrapper_end', 10 );
+}
+add_action( 'wp', 'vapestore_woocommerce_layout_hooks' );
+
+/**
  * Get the current WooCommerce cart item count.
  *
  * @return int

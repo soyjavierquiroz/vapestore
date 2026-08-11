@@ -499,6 +499,7 @@ a {
 	gap: 18px;
 	grid-template-columns: repeat(5, minmax(0, 1fr));
 	margin: 0;
+	padding: 0;
 }
 
 .woocommerce ul.products::before,
@@ -507,10 +508,13 @@ a {
 }
 
 .woocommerce ul.products li.product,
-.woocommerce-page ul.products li.product {
+.woocommerce-page ul.products li.product,
+.woocommerce ul.products[class*="columns-"] li.product,
+.woocommerce-page ul.products[class*="columns-"] li.product {
 	background: #fff;
 	border: 1px solid var(--border);
 	border-radius: 6px;
+	clear: none;
 	display: flex;
 	flex-direction: column;
 	float: none;
@@ -520,6 +524,82 @@ a {
 	padding: 0 0 14px;
 	position: relative;
 	width: auto;
+}
+
+.store-main {
+	padding: 36px 0 56px;
+}
+
+.store-main .woocommerce-breadcrumb {
+	color: var(--muted);
+	font-size: 0.875rem;
+	margin: 0 0 18px;
+}
+
+.store-main .woocommerce-breadcrumb a {
+	color: var(--accent-dark);
+	text-decoration: none;
+}
+
+.store-main .woocommerce-breadcrumb a:hover,
+.store-main .woocommerce-breadcrumb a:focus {
+	text-decoration: underline;
+}
+
+.woocommerce-products-header {
+	border-bottom: 1px solid var(--border);
+	margin: 0 0 22px;
+	padding-bottom: 16px;
+}
+
+.woocommerce-products-header__title {
+	font-size: clamp(1.85rem, 4vw, 2.6rem);
+	line-height: 1.1;
+	margin: 0;
+}
+
+.woocommerce-products-header .term-description {
+	color: var(--muted);
+	max-width: 760px;
+}
+
+.woocommerce-products-header .term-description > :last-child {
+	margin-bottom: 0;
+}
+
+.woocommerce .woocommerce-result-count,
+.woocommerce-page .woocommerce-result-count {
+	clear: none;
+	color: var(--muted);
+	float: left;
+	margin: 0 0 20px;
+	padding-top: 9px;
+}
+
+.woocommerce .woocommerce-ordering,
+.woocommerce-page .woocommerce-ordering {
+	float: right;
+	margin: 0 0 20px;
+}
+
+.woocommerce .woocommerce-ordering select {
+	background: #fff;
+	border: 1px solid var(--border);
+	border-radius: 4px;
+	color: var(--text);
+	font: inherit;
+	min-height: 42px;
+	padding: 8px 34px 8px 10px;
+}
+
+.woocommerce .woocommerce-ordering + ul.products,
+.woocommerce-page .woocommerce-ordering + ul.products {
+	clear: both;
+}
+
+.post-type-archive-product.woocommerce ul.products,
+.tax-product_cat.woocommerce ul.products {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .woocommerce ul.products li.product .woocommerce-loop-product__link {
