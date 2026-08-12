@@ -91,9 +91,9 @@
 					array(
 						'theme_location' => 'primary',
 						'container'      => false,
-						'menu_class'     => 'menu primary-menu',
+						'menu_class'     => 'menu primary-menu primary-menu--enhanced',
 						'fallback_cb'    => false,
-						'depth'          => 2,
+						'depth'          => 3,
 					)
 				);
 			} else {
