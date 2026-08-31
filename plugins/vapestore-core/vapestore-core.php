@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once plugin_dir_path( __FILE__ ) . 'inc/dev-seed-variable-product.php';
+
 /**
  * Check whether the current user may upload trusted SVG brand assets.
  *
