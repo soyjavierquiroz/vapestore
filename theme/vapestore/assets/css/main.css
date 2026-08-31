@@ -2547,7 +2547,9 @@ a {
 }
 
 @media (max-width: 699px) {
-	.woocommerce ul.products {
+	.woocommerce ul.products,
+	.post-type-archive-product.woocommerce ul.products,
+	.tax-product_cat.woocommerce ul.products {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
@@ -2704,7 +2706,9 @@ a {
 }
 
 @media (max-width: 379px) {
-	.woocommerce ul.products {
+	.woocommerce ul.products,
+	.post-type-archive-product.woocommerce ul.products,
+	.tax-product_cat.woocommerce ul.products {
 		grid-template-columns: 1fr;
 	}
 
