@@ -13,6 +13,20 @@ const VAPESTORE_BULK_VARIATION_ACTION = 'vapestore_bulk_variation_order';
 const VAPESTORE_BULK_VARIATION_NONCE  = 'vapestore_bulk_variation_nonce';
 
 /**
+ * Check whether the bulk variation table can render for a product.
+ *
+ * @param WC_Product|false|null $product Product object.
+ * @return bool
+ */
+function vapestore_bulk_variation_can_render_table( $product ) {
+	if ( ! $product instanceof WC_Product_Variable ) {
+		return false;
+	}
+
+	return ! empty( $product->get_available_variations() );
+}
+
+/**
  * Build a readable label for a variation from its native attributes.
  *
  * @param WC_Product_Variation $variation Variation product.
@@ -73,17 +87,12 @@ function vapestore_bulk_variation_render_table() {
 
 	global $product;
 
-	if ( ! $product instanceof WC_Product_Variable ) {
+	if ( ! vapestore_bulk_variation_can_render_table( $product ) ) {
 		return;
 	}
 
 	$available_variations = $product->get_available_variations();
-
-	if ( empty( $available_variations ) ) {
-		return;
-	}
-
-	$product_id = $product->get_id();
+	$product_id           = $product->get_id();
 	?>
 	<section class="vapestore-bulk-variations" aria-labelledby="vapestore-bulk-variations-title">
 		<h2 id="vapestore-bulk-variations-title"><?php esc_html_e( 'Order Multiple Variations', 'vapestore-core' ); ?></h2>
@@ -178,7 +187,25 @@ function vapestore_bulk_variation_render_table() {
 	</section>
 	<?php
 }
-add_action( 'woocommerce_after_add_to_cart_form', 'vapestore_bulk_variation_render_table', 20 );
+add_action( 'woocommerce_single_product_summary', 'vapestore_bulk_variation_render_table', 35 );
+
+/**
+ * Use the bulk table instead of the native variable add-to-cart form when available.
+ *
+ * @return void
+ */
+function vapestore_bulk_variation_maybe_remove_native_form() {
+	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+		return;
+	}
+
+	global $product;
+
+	if ( vapestore_bulk_variation_can_render_table( $product ) ) {
+		remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
+	}
+}
+add_action( 'woocommerce_single_product_summary', 'vapestore_bulk_variation_maybe_remove_native_form', 29 );
 
 /**
  * Handle bulk variation add-to-cart submissions.
