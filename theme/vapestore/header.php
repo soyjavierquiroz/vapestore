@@ -36,12 +36,40 @@
 	<div class="container site-header__main">
 		<div class="site-branding">
 			<?php
+			$mobile_logo = get_theme_mod( 'vapestore_mobile_logo' );
+
 			if ( has_custom_logo() ) {
-				the_custom_logo();
+				?>
+				<div class="site-logo site-logo--desktop">
+					<?php the_custom_logo(); ?>
+				</div>
+				<?php
 			} else {
 				?>
-				<a class="site-title" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
+				<a class="site-title<?php echo $mobile_logo ? ' site-logo--desktop' : ''; ?>" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
 					<?php bloginfo( 'name' ); ?>
+				</a>
+				<?php
+			}
+
+			if ( $mobile_logo || has_custom_logo() ) {
+				?>
+				<a class="site-logo site-logo--mobile" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home">
+					<?php if ( $mobile_logo ) : ?>
+						<img src="<?php echo esc_url( $mobile_logo ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
+					<?php elseif ( has_custom_logo() ) : ?>
+						<?php
+						$custom_logo_id = get_theme_mod( 'custom_logo' );
+						echo wp_get_attachment_image(
+							$custom_logo_id,
+							'full',
+							false,
+							array(
+								'alt' => get_bloginfo( 'name' ),
+							)
+						);
+						?>
+					<?php endif; ?>
 				</a>
 				<?php
 			}

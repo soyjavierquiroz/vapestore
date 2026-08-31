@@ -17,6 +17,15 @@ require get_template_directory() . '/inc/acf-home.php';
 function vapestore_setup() {
 	add_theme_support( 'title-tag' );
 	add_theme_support( 'post-thumbnails' );
+	add_theme_support(
+		'custom-logo',
+		array(
+			'height'      => 60,
+			'width'       => 260,
+			'flex-height' => true,
+			'flex-width'  => true,
+		)
+	);
 	add_theme_support( 'woocommerce' );
 	add_theme_support( 'wc-product-gallery-zoom' );
 	add_theme_support( 'wc-product-gallery-lightbox' );
@@ -56,6 +65,35 @@ function vapestore_enqueue_assets() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'vapestore_enqueue_assets' );
+
+/**
+ * Register theme Customizer settings.
+ *
+ * @param WP_Customize_Manager $wp_customize Customizer manager.
+ */
+function vapestore_customize_register( $wp_customize ) {
+	$wp_customize->add_setting(
+		'vapestore_mobile_logo',
+		array(
+			'default'           => '',
+			'sanitize_callback' => 'esc_url_raw',
+		)
+	);
+
+	$wp_customize->add_control(
+		new WP_Customize_Image_Control(
+			$wp_customize,
+			'vapestore_mobile_logo',
+			array(
+				'label'       => __( 'Mobile Logo', 'vapestore' ),
+				'description' => __( 'Upload the compact isotipo logo for mobile headers.', 'vapestore' ),
+				'section'     => 'title_tagline',
+				'settings'    => 'vapestore_mobile_logo',
+			)
+		)
+	);
+}
+add_action( 'customize_register', 'vapestore_customize_register' );
 
 /**
  * Use simple theme wrappers for WooCommerce screens.

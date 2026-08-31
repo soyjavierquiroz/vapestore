@@ -6,23 +6,41 @@
 
 :root {
 	--container: 1200px;
-	--text: #17212b;
-	--muted: #667085;
-	--border: #dfe4ea;
-	--soft: #f5f7f7;
-	--surface: #fff;
-	--surface-alt: #f4f7f8;
-	--dark: #111827;
-	--accent: #0f8f70;
-	--accent-dark: #08634d;
+	--brand-black: #000000;
+	--brand-white: #ffffff;
+	--brand-green: #47ef03;
+	--brand-green-dark: #0e7814;
+	--brand-purple: #c044e4;
+	--brand-magenta: #ff00ff;
+	--brand-gray: #808080;
+	--text: #111111;
+	--muted: #808080;
+	--surface: #ffffff;
+	--surface-alt: #f7f7f7;
+	--border: #e5e5e5;
+	--accent: #47ef03;
+	--accent-hover: #0e7814;
+	--promo: #c044e4;
+	--dark: #000000;
+	--font-heading: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	--font-body: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
 	margin: 0;
 	background: var(--surface);
 	color: var(--text);
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-family: var(--font-body);
 	line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--font-heading);
 }
 
 img {
@@ -50,7 +68,7 @@ a {
 
 .site-footer {
 	background: var(--dark);
-	color: #fff;
+	color: var(--brand-white);
 	margin-top: 56px;
 	padding: 56px 0 24px;
 }
@@ -58,7 +76,7 @@ a {
 .utility-bar {
 	background: var(--dark);
 	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-	color: rgba(255, 255, 255, 0.78);
+	color: rgba(255, 255, 255, 0.82);
 	font-size: 0.875rem;
 }
 
@@ -86,6 +104,7 @@ a {
 .utility-bar a:focus,
 .menu a:hover,
 .menu a:focus {
+	color: var(--brand-green);
 	text-decoration: underline;
 }
 
@@ -107,7 +126,18 @@ a {
 }
 
 .site-branding .custom-logo {
-	max-height: 64px;
+	display: block;
+	max-height: 58px;
+	width: auto;
+}
+
+.site-logo--mobile {
+	display: none;
+}
+
+.site-logo--mobile img {
+	display: block;
+	max-height: 46px;
 	width: auto;
 }
 
@@ -152,13 +182,22 @@ a {
 	background: var(--accent);
 	border: 1px solid var(--accent);
 	border-radius: 0 4px 4px 0;
-	color: #fff;
+	color: var(--brand-black);
 	cursor: pointer;
 	font: inherit;
 	font-weight: 600;
 	min-height: 44px;
 	padding: 10px 16px;
 	white-space: nowrap;
+}
+
+.product-search button:hover,
+.product-search button:focus,
+.product-search input[type="submit"]:hover,
+.product-search input[type="submit"]:focus {
+	background: var(--accent-hover);
+	border-color: var(--accent-hover);
+	color: var(--brand-white);
 }
 
 .header-actions {
@@ -186,15 +225,16 @@ a {
 .header-action:focus,
 .menu-toggle:hover,
 .menu-toggle:focus {
-	border-color: var(--border);
+	border-color: var(--accent);
+	color: var(--accent-hover);
 	text-decoration: none;
 }
 
 .header-cart-count {
 	align-items: center;
-	background: var(--accent);
+	background: var(--promo);
 	border-radius: 999px;
-	color: #fff;
+	color: var(--brand-white);
 	display: inline-flex;
 	font-size: 0.75rem;
 	font-weight: 700;
@@ -230,7 +270,7 @@ a {
 }
 
 .primary-menu a {
-	color: #fff;
+	color: var(--brand-white);
 	display: inline-flex;
 	min-height: 44px;
 	padding: 11px 0;
@@ -279,7 +319,7 @@ a {
 
 .primary-menu a:hover,
 .primary-menu a:focus {
-	color: #d5fff4;
+	color: var(--brand-green);
 }
 
 .primary-menu .sub-menu a:hover,
@@ -379,13 +419,14 @@ a {
 .button--primary {
 	background: var(--accent);
 	border: 1px solid var(--accent);
-	color: #fff;
+	color: var(--brand-black);
 }
 
 .button--primary:hover,
 .button--primary:focus {
-	background: var(--accent-dark);
-	border-color: var(--accent-dark);
+	background: var(--accent-hover);
+	border-color: var(--accent-hover);
+	color: var(--brand-white);
 	text-decoration: none;
 }
 
@@ -398,7 +439,7 @@ a {
 .button--secondary:hover,
 .button--secondary:focus {
 	border-color: var(--accent);
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	text-decoration: none;
 }
 
@@ -407,7 +448,7 @@ a {
 }
 
 .home-hero {
-	background: linear-gradient(135deg, #eef8f5 0%, #f8fafc 100%);
+	background: var(--surface-alt);
 	padding: 66px 0;
 }
 
@@ -550,7 +591,7 @@ a {
 }
 
 .home-section__heading a {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	font-weight: 800;
 	text-decoration: none;
 	white-space: nowrap;
@@ -646,7 +687,7 @@ a {
 }
 
 .store-main .woocommerce-breadcrumb a {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	text-decoration: none;
 }
 
@@ -742,7 +783,7 @@ a {
 }
 
 .woocommerce ul.products li.product .price {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	display: block;
 	font-size: 1rem;
 	font-weight: 800;
@@ -764,7 +805,7 @@ a {
 	background: var(--accent);
 	border: 1px solid var(--accent);
 	border-radius: 4px;
-	color: #fff;
+	color: var(--brand-black);
 	font-size: 0.9rem;
 	margin: 14px 14px 0;
 	min-height: 40px;
@@ -774,15 +815,16 @@ a {
 
 .woocommerce ul.products li.product .button:hover,
 .woocommerce ul.products li.product .button:focus {
-	background: var(--accent-dark);
-	border-color: var(--accent-dark);
+	background: var(--accent-hover);
+	border-color: var(--accent-hover);
+	color: var(--brand-white);
 }
 
 .woocommerce span.onsale,
 .woocommerce ul.products li.product .onsale {
-	background: var(--accent);
+	background: var(--promo);
 	border-radius: 999px;
-	color: #fff;
+	color: var(--brand-white);
 	font-size: 0.75rem;
 	font-weight: 800;
 	left: 10px;
@@ -916,13 +958,13 @@ a {
 
 .woocommerce div.product .woocommerce-review-link:hover,
 .woocommerce div.product .woocommerce-review-link:focus {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	text-decoration: underline;
 }
 
 .woocommerce div.product .summary p.price,
 .woocommerce div.product .summary span.price {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	font-size: clamp(1.65rem, 3vw, 2.2rem);
 	font-weight: 800;
 	line-height: 1.15;
@@ -965,7 +1007,7 @@ a {
 }
 
 .woocommerce div.product p.stock.in-stock {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 }
 
 .woocommerce div.product form.cart {
@@ -997,7 +1039,7 @@ a {
 	background: var(--accent);
 	border: 1px solid var(--accent);
 	border-radius: 4px;
-	color: #fff;
+	color: var(--brand-black);
 	cursor: pointer;
 	flex: 1 1 220px;
 	font: inherit;
@@ -1011,8 +1053,9 @@ a {
 .woocommerce div.product form.cart .button:focus,
 .woocommerce div.product form.cart .single_add_to_cart_button:hover,
 .woocommerce div.product form.cart .single_add_to_cart_button:focus {
-	background: var(--accent-dark);
-	border-color: var(--accent-dark);
+	background: var(--accent-hover);
+	border-color: var(--accent-hover);
+	color: var(--brand-white);
 }
 
 .woocommerce div.product form.cart .button.disabled,
@@ -1089,7 +1132,7 @@ a {
 }
 
 .woocommerce div.product .product_meta a {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	text-decoration: none;
 }
 
@@ -1245,7 +1288,7 @@ a {
 	background: var(--accent);
 	border: 1px solid var(--accent);
 	border-radius: 4px;
-	color: #fff;
+	color: var(--brand-black);
 	cursor: pointer;
 	font: inherit;
 	font-weight: 800;
@@ -1255,8 +1298,9 @@ a {
 
 .woocommerce #reviews .form-submit .submit:hover,
 .woocommerce #reviews .form-submit .submit:focus {
-	background: var(--accent-dark);
-	border-color: var(--accent-dark);
+	background: var(--accent-hover);
+	border-color: var(--accent-hover);
+	color: var(--brand-white);
 }
 
 .woocommerce-cart .page-content,
@@ -1325,7 +1369,7 @@ a {
 .woocommerce-message a,
 .woocommerce-error a,
 .woocommerce-info a {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	font-weight: 700;
 }
 
@@ -1403,7 +1447,7 @@ a {
 .wc-block-cart-item__product:focus,
 .wc-block-components-product-name:hover,
 .wc-block-components-product-name:focus {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	text-decoration: underline;
 }
 
@@ -1481,7 +1525,7 @@ a {
 .woocommerce form .form-row select:focus,
 .woocommerce form .form-row textarea:focus {
 	border-color: var(--accent);
-	box-shadow: 0 0 0 3px rgba(15, 143, 112, 0.16);
+	box-shadow: 0 0 0 3px rgba(71, 239, 3, 0.16);
 	outline: none;
 }
 
@@ -1528,7 +1572,7 @@ a {
 	background: var(--accent);
 	border: 1px solid var(--accent);
 	border-radius: 4px;
-	color: #fff;
+	color: var(--brand-black);
 	cursor: pointer;
 	font: inherit;
 	font-weight: 800;
@@ -1545,9 +1589,9 @@ a {
 .wc-block-cart__submit-button:focus,
 .wc-block-components-checkout-place-order-button:hover,
 .wc-block-components-checkout-place-order-button:focus {
-	background: var(--accent-dark);
-	border-color: var(--accent-dark);
-	color: #fff;
+	background: var(--accent-hover);
+	border-color: var(--accent-hover);
+	color: var(--brand-white);
 	text-decoration: none;
 }
 
@@ -1630,7 +1674,7 @@ a {
 }
 
 .wc-block-grid__product-price {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	font-weight: 800;
 	margin-top: 10px;
 	padding: 0 14px;
@@ -1749,7 +1793,7 @@ a {
 .woocommerce .lost_password a,
 .woocommerce-MyAccount-content a,
 .woocommerce-order a {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	font-weight: 700;
 }
 
@@ -1791,12 +1835,12 @@ a {
 .woocommerce-MyAccount-navigation a:hover,
 .woocommerce-MyAccount-navigation a:focus {
 	background: var(--surface-alt);
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	text-decoration: none;
 }
 
 .woocommerce-MyAccount-navigation a:focus-visible {
-	box-shadow: inset 0 0 0 3px rgba(15, 143, 112, 0.18);
+	box-shadow: inset 0 0 0 3px rgba(71, 239, 3, 0.18);
 	outline: none;
 }
 
@@ -1887,7 +1931,7 @@ a {
 	background: var(--accent);
 	border: 1px solid var(--accent);
 	border-radius: 4px;
-	color: #fff;
+	color: var(--brand-black);
 	cursor: pointer;
 	font: inherit;
 	font-weight: 800;
@@ -1904,9 +1948,9 @@ a {
 .woocommerce input.button:focus,
 .woocommerce a.button:hover,
 .woocommerce a.button:focus {
-	background: var(--accent-dark);
-	border-color: var(--accent-dark);
-	color: #fff;
+	background: var(--accent-hover);
+	border-color: var(--accent-hover);
+	color: var(--brand-white);
 	text-decoration: none;
 }
 
@@ -1957,7 +2001,7 @@ a {
 }
 
 .woocommerce-Address-title .edit {
-	color: var(--accent-dark);
+	color: var(--accent-hover);
 	font-weight: 800;
 	text-decoration: none;
 	white-space: nowrap;
@@ -2050,8 +2094,9 @@ a {
 
 .home-promo__inner {
 	background: var(--dark);
+	border-top: 4px solid var(--promo);
 	border-radius: 8px;
-	color: #fff;
+	color: var(--brand-white);
 	overflow: hidden;
 	padding: 28px;
 }
@@ -2099,7 +2144,7 @@ a {
 
 .footer-menu a:hover,
 .footer-menu a:focus {
-	color: #fff;
+	color: var(--brand-green);
 	text-decoration: underline;
 }
 
@@ -2140,6 +2185,14 @@ a {
 }
 
 @media (max-width: 899px) {
+	.site-logo--desktop {
+		display: none;
+	}
+
+	.site-logo--mobile {
+		display: inline-flex;
+	}
+
 	.utility-bar__inner {
 		align-items: flex-start;
 		flex-direction: column;
@@ -2223,7 +2276,7 @@ a {
 	.primary-menu > .menu-item-has-children:has(.sub-menu .sub-menu) > .sub-menu > .menu-item > a,
 	.primary-menu > .menu-item-has-children:has(.sub-menu .sub-menu) > .sub-menu > .menu-item > .sub-menu a {
 		border-top: 1px solid rgba(255, 255, 255, 0.1);
-		color: #fff;
+		color: var(--brand-white);
 		font-size: 0.95rem;
 		font-weight: 400;
 		min-height: 42px;
@@ -2241,7 +2294,7 @@ a {
 	.primary-menu .current-menu-item > a,
 	.primary-menu .current-menu-parent > a,
 	.primary-menu .current-menu-ancestor > a {
-		color: #d5fff4;
+		color: var(--brand-green);
 	}
 
 	.submenu-toggle {
@@ -2249,7 +2302,7 @@ a {
 		background: transparent;
 		border: 0;
 		border-left: 1px solid rgba(255, 255, 255, 0.14);
-		color: #fff;
+		color: var(--brand-white);
 		cursor: pointer;
 		display: inline-flex;
 		font: inherit;
@@ -2264,7 +2317,7 @@ a {
 
 	.submenu-toggle:hover,
 	.submenu-toggle:focus {
-		color: #d5fff4;
+		color: var(--brand-green);
 	}
 
 	.home-hero__inner,
