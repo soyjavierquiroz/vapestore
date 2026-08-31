@@ -67,6 +67,36 @@ function vapestore_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'vapestore_enqueue_assets' );
 
 /**
+ * Show the first native WooCommerce product brand on product cards.
+ */
+function vapestore_loop_product_brand() {
+	global $product;
+
+	if ( ! $product instanceof WC_Product || ! taxonomy_exists( 'product_brand' ) ) {
+		return;
+	}
+
+	$brands = get_the_terms( $product->get_id(), 'product_brand' );
+
+	if ( empty( $brands ) || is_wp_error( $brands ) ) {
+		return;
+	}
+
+	$brand = reset( $brands );
+	$link  = get_term_link( $brand, 'product_brand' );
+	?>
+	<div class="product-card-brand">
+		<?php if ( ! is_wp_error( $link ) ) : ?>
+			<a href="<?php echo esc_url( $link ); ?>"><?php echo esc_html( $brand->name ); ?></a>
+		<?php else : ?>
+			<?php echo esc_html( $brand->name ); ?>
+		<?php endif; ?>
+	</div>
+	<?php
+}
+add_action( 'woocommerce_shop_loop_item_title', 'vapestore_loop_product_brand', 9 );
+
+/**
  * Register theme Customizer settings.
  *
  * @param WP_Customize_Manager $wp_customize Customizer manager.
