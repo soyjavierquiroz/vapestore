@@ -1173,6 +1173,134 @@ a {
 	text-decoration: underline;
 }
 
+.vapestore-bulk-variations {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	grid-column: 1 / -1;
+	margin-top: 14px;
+	padding: 22px;
+}
+
+.vapestore-bulk-variations h2 {
+	border-left: 4px solid var(--brand-purple);
+	font-size: 1.35rem;
+	line-height: 1.2;
+	margin: 0;
+	padding-left: 10px;
+}
+
+.vapestore-bulk-variations p {
+	color: var(--muted);
+	margin: 8px 0 18px;
+}
+
+.vapestore-bulk-variations__form {
+	margin: 0;
+}
+
+.vapestore-bulk-variations__table-wrap {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.vapestore-bulk-variations__table {
+	border-collapse: collapse;
+	min-width: 620px;
+	width: 100%;
+}
+
+.vapestore-bulk-variations__table th,
+.vapestore-bulk-variations__table td {
+	border-bottom: 1px solid var(--border);
+	padding: 12px;
+	text-align: left;
+	vertical-align: middle;
+}
+
+.vapestore-bulk-variations__table thead th {
+	background: var(--surface-alt);
+	color: var(--text);
+	font-size: 0.82rem;
+	font-weight: 900;
+	letter-spacing: 0;
+	text-transform: uppercase;
+}
+
+.vapestore-bulk-variations__table tbody th {
+	font-weight: 800;
+}
+
+.vapestore-bulk-variations__stock {
+	font-weight: 800;
+}
+
+.vapestore-bulk-variations__stock.is-in-stock {
+	color: var(--brand-green-dark);
+}
+
+.vapestore-bulk-variations__stock.is-out-of-stock {
+	color: #b42318;
+}
+
+.vapestore-bulk-variations__price {
+	color: var(--accent-hover);
+	font-weight: 800;
+}
+
+.vapestore-bulk-variations__price del {
+	color: var(--muted);
+	font-weight: 500;
+	opacity: 1;
+}
+
+.vapestore-bulk-variations__price ins {
+	text-decoration: none;
+}
+
+.vapestore-bulk-variations__qty {
+	border: 1px solid var(--border);
+	border-radius: 4px;
+	color: var(--text);
+	font: inherit;
+	font-weight: 800;
+	min-height: 42px;
+	padding: 8px 6px;
+	width: 84px;
+}
+
+.vapestore-bulk-variations__qty:focus {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px rgba(71, 239, 3, 0.16);
+	outline: none;
+}
+
+.vapestore-bulk-variations__qty:disabled {
+	background: var(--surface-alt);
+	color: var(--muted);
+	cursor: not-allowed;
+}
+
+.vapestore-bulk-variations__submit {
+	background: #47ef03;
+	border: 1px solid #47ef03;
+	border-radius: 4px;
+	color: var(--brand-black);
+	cursor: pointer;
+	font: inherit;
+	font-weight: 900;
+	margin-top: 16px;
+	min-height: 46px;
+	padding: 11px 18px;
+}
+
+.vapestore-bulk-variations__submit:hover,
+.vapestore-bulk-variations__submit:focus {
+	background: #0e7814;
+	border-color: #0e7814;
+	color: var(--brand-white);
+}
+
 .woocommerce div.product .woocommerce-tabs,
 .woocommerce div.product .related.products {
 	grid-column: 1 / -1;

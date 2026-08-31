@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once plugin_dir_path( __FILE__ ) . 'inc/dev-seed-variable-product.php';
+require_once plugin_dir_path( __FILE__ ) . 'inc/bulk-variation-order.php';
 
 /**
  * Check whether the current user may upload trusted SVG brand assets.
