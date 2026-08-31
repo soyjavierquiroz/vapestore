@@ -644,6 +644,27 @@ a {
 	margin-top: 0;
 }
 
+.vapestore-recently-viewed {
+	padding: 48px 0;
+}
+
+.vapestore-recently-viewed--product {
+	clear: both;
+	padding-bottom: 0;
+}
+
+.vapestore-recently-viewed__inner {
+	width: 100%;
+}
+
+.vapestore-recently-viewed__heading {
+	margin-top: 0;
+}
+
+.vapestore-recently-viewed__products .woocommerce {
+	margin-top: 0;
+}
+
 .woocommerce ul.products {
 	display: grid;
 	gap: 18px;
@@ -749,6 +770,10 @@ a {
 
 .post-type-archive-product.woocommerce ul.products,
 .tax-product_cat.woocommerce ul.products {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.vapestore-recently-viewed--product .woocommerce ul.products {
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 

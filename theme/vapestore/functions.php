@@ -48,6 +48,7 @@ function vapestore_enqueue_assets() {
 	$theme_uri = get_template_directory_uri();
 	$css_path  = $theme_dir . '/assets/css/main.css';
 	$js_path   = $theme_dir . '/assets/js/main.js';
+	$product_id = function_exists( 'is_product' ) && is_product() ? get_queried_object_id() : 0;
 
 	wp_enqueue_style(
 		'vapestore-main',
@@ -62,6 +63,17 @@ function vapestore_enqueue_assets() {
 		array(),
 		file_exists( $js_path ) ? filemtime( $js_path ) : '0.1.0',
 		true
+	);
+
+	wp_add_inline_script(
+		'vapestore-main',
+		'window.vapestoreRecentlyViewed = ' . wp_json_encode(
+			array(
+				'endpoint'         => esc_url_raw( rest_url( 'vapestore/v1/recently-viewed' ) ),
+				'currentProductId' => absint( $product_id ),
+			)
+		) . ';',
+		'before'
 	);
 }
 add_action( 'wp_enqueue_scripts', 'vapestore_enqueue_assets' );
@@ -187,3 +199,150 @@ function vapestore_cart_count_fragment( $fragments ) {
 	return $fragments;
 }
 add_filter( 'woocommerce_add_to_cart_fragments', 'vapestore_cart_count_fragment' );
+
+/**
+ * Register the public recently viewed product card endpoint.
+ */
+function vapestore_register_recently_viewed_route() {
+	register_rest_route(
+		'vapestore/v1',
+		'/recently-viewed',
+		array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => 'vapestore_rest_recently_viewed_products',
+			'permission_callback' => '__return_true',
+			'args'                => array(
+				'ids'   => array(
+					'type'              => 'string',
+					'required'          => true,
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				'limit' => array(
+					'type'              => 'integer',
+					'default'           => 4,
+					'sanitize_callback' => 'absint',
+				),
+			),
+		)
+	);
+}
+add_action( 'rest_api_init', 'vapestore_register_recently_viewed_route' );
+
+/**
+ * Normalize a requested product ID list.
+ *
+ * @param string|array<int|string> $raw_ids Raw product IDs.
+ * @return array<int>
+ */
+function vapestore_normalize_recently_viewed_ids( $raw_ids ) {
+	$raw_ids = is_array( $raw_ids ) ? $raw_ids : explode( ',', (string) $raw_ids );
+	$ids     = array();
+
+	foreach ( $raw_ids as $raw_id ) {
+		$product_id = absint( $raw_id );
+
+		if ( $product_id > 0 && ! in_array( $product_id, $ids, true ) ) {
+			$ids[] = $product_id;
+		}
+
+		if ( count( $ids ) >= 8 ) {
+			break;
+		}
+	}
+
+	return $ids;
+}
+
+/**
+ * Check whether a product may appear in recently viewed cards.
+ *
+ * @param WC_Product|false|null $product Product object.
+ * @return bool
+ */
+function vapestore_is_recently_viewed_product_visible( $product ) {
+	if ( ! $product instanceof WC_Product ) {
+		return false;
+	}
+
+	$product_id = $product->get_id();
+
+	return 'product' === get_post_type( $product_id )
+		&& 'publish' === get_post_status( $product_id )
+		&& $product->is_visible();
+}
+
+/**
+ * Render public product cards for recently viewed products.
+ *
+ * @param WP_REST_Request $request REST request.
+ * @return WP_REST_Response
+ */
+function vapestore_rest_recently_viewed_products( $request ) {
+	if ( ! function_exists( 'wc_get_product' ) || ! function_exists( 'woocommerce_product_loop_start' ) ) {
+		return rest_ensure_response( array( 'html' => '' ) );
+	}
+
+	$ids   = vapestore_normalize_recently_viewed_ids( $request->get_param( 'ids' ) );
+	$limit = min( 8, max( 1, absint( $request->get_param( 'limit' ) ) ) );
+
+	if ( empty( $ids ) ) {
+		return rest_ensure_response( array( 'html' => '' ) );
+	}
+
+	$ids = array_slice( $ids, 0, $limit );
+
+	ob_start();
+
+	woocommerce_product_loop_start();
+
+	foreach ( $ids as $product_id ) {
+		$product = wc_get_product( $product_id );
+
+		if ( ! vapestore_is_recently_viewed_product_visible( $product ) ) {
+			continue;
+		}
+
+		$GLOBALS['post']    = get_post( $product_id ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$GLOBALS['product'] = $product; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		setup_postdata( $GLOBALS['post'] );
+
+		wc_get_template_part( 'content', 'product' );
+	}
+
+	woocommerce_product_loop_end();
+	wp_reset_postdata();
+
+	return rest_ensure_response( array( 'html' => trim( ob_get_clean() ) ) );
+}
+
+/**
+ * Render a frontend-populated recently viewed placeholder.
+ *
+ * @param string $context Product or home context.
+ * @param int    $limit   Maximum visible cards.
+ */
+function vapestore_recently_viewed_placeholder( $context, $limit ) {
+	?>
+	<section
+		class="vapestore-recently-viewed vapestore-recently-viewed--<?php echo esc_attr( $context ); ?>"
+		data-vapestore-recently-viewed
+		data-limit="<?php echo esc_attr( absint( $limit ) ); ?>"
+		hidden
+	>
+		<div class="<?php echo 'home' === $context ? 'container' : 'vapestore-recently-viewed__inner'; ?>">
+			<div class="home-section__heading vapestore-recently-viewed__heading">
+				<h2><?php esc_html_e( 'Recently Viewed', 'vapestore' ); ?></h2>
+			</div>
+			<div class="vapestore-recently-viewed__products" data-vapestore-recently-viewed-products></div>
+		</div>
+	</section>
+	<?php
+}
+
+/**
+ * Show recently viewed products below the single product discovery area.
+ */
+function vapestore_single_product_recently_viewed() {
+	vapestore_recently_viewed_placeholder( 'product', 4 );
+}
+add_action( 'woocommerce_after_single_product_summary', 'vapestore_single_product_recently_viewed', 25 );

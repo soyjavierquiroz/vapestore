@@ -217,6 +217,8 @@ $new_products = function_exists( 'wc_get_products' )
 		</div>
 	</section>
 
+	<?php vapestore_recently_viewed_placeholder( 'home', 5 ); ?>
+
 	<section class="home-about <?php echo $about_has_media ? 'home-about--has-media' : 'home-about--text-only'; ?>">
 		<div class="container home-about__inner">
 			<div class="home-about__content">
