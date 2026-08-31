@@ -13,17 +13,42 @@ const VAPESTORE_BULK_VARIATION_ACTION = 'vapestore_bulk_variation_order';
 const VAPESTORE_BULK_VARIATION_NONCE  = 'vapestore_bulk_variation_nonce';
 
 /**
- * Check whether the bulk variation table can render for a product.
+ * Check whether the bulk variation ordering feature is loaded.
+ *
+ * @return bool
+ */
+function vapestore_bulk_variation_is_loaded() {
+	return defined( 'VAPESTORE_BULK_VARIATION_ACTION' )
+		&& defined( 'VAPESTORE_BULK_VARIATION_NONCE' )
+		&& function_exists( 'wc_get_product' );
+}
+
+/**
+ * Check whether a product is eligible for bulk variation ordering.
  *
  * @param WC_Product|false|null $product Product object.
  * @return bool
  */
-function vapestore_bulk_variation_can_render_table( $product ) {
-	if ( ! $product instanceof WC_Product_Variable ) {
+function vapestore_bulk_variation_is_eligible_product( $product ) {
+	if ( ! vapestore_bulk_variation_is_loaded() || ! $product instanceof WC_Product_Variable ) {
 		return false;
 	}
 
-	return ! empty( $product->get_available_variations() );
+	$available_variations = $product->get_available_variations();
+
+	if ( empty( $available_variations ) ) {
+		return false;
+	}
+
+	foreach ( $available_variations as $available_variation ) {
+		$variation_id = isset( $available_variation['variation_id'] ) ? (int) $available_variation['variation_id'] : 0;
+
+		if ( $variation_id > 0 && wc_get_product( $variation_id ) instanceof WC_Product_Variation ) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 /**
@@ -87,7 +112,7 @@ function vapestore_bulk_variation_render_table() {
 
 	global $product;
 
-	if ( ! vapestore_bulk_variation_can_render_table( $product ) ) {
+	if ( ! vapestore_bulk_variation_is_eligible_product( $product ) ) {
 		return;
 	}
 
@@ -201,11 +226,15 @@ function vapestore_bulk_variation_maybe_remove_native_form() {
 
 	global $product;
 
-	if ( vapestore_bulk_variation_can_render_table( $product ) ) {
+	if ( ! $product instanceof WC_Product && function_exists( 'wc_get_product' ) ) {
+		$product = wc_get_product( get_queried_object_id() );
+	}
+
+	if ( vapestore_bulk_variation_is_eligible_product( $product ) ) {
 		remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
 	}
 }
-add_action( 'woocommerce_single_product_summary', 'vapestore_bulk_variation_maybe_remove_native_form', 29 );
+add_action( 'woocommerce_before_single_product', 'vapestore_bulk_variation_maybe_remove_native_form', 1 );
 
 /**
  * Handle bulk variation add-to-cart submissions.

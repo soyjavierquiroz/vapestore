@@ -1178,7 +1178,7 @@ a {
 	border: 1px solid var(--border);
 	border-radius: 6px;
 	grid-column: 1 / -1;
-	margin-top: 14px;
+	margin: 18px 0 22px;
 	padding: 22px;
 }
 
