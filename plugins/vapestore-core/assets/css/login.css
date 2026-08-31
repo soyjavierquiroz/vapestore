@@ -1,0 +1,198 @@
+body.login {
+	background:
+		radial-gradient(circle at 50% 0%, rgba(71, 239, 3, 0.12), transparent 30rem),
+		linear-gradient(180deg, #101010 0%, #000000 60%);
+	color: #f5f5f5;
+	min-height: 100vh;
+}
+
+.login #login {
+	box-sizing: border-box;
+	width: min(100%, 390px);
+	padding: 6vh 20px 0;
+}
+
+.login h1 {
+	margin-bottom: 24px;
+}
+
+.login h1 a {
+	background-size: contain;
+	background-position: center;
+	height: 92px;
+	margin: 0 auto;
+	max-width: 260px;
+	width: 100%;
+}
+
+.login form {
+	background: #ffffff;
+	border: 1px solid #d8d8d8;
+	border-radius: 8px;
+	box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+	color: #1d1d1d;
+	margin-top: 0;
+	padding: 26px 24px 28px;
+}
+
+.login label {
+	color: #1d1d1d;
+	font-size: 14px;
+}
+
+.login .forgetmenot label {
+	line-height: 1.5;
+}
+
+.login input[type="text"],
+.login input[type="password"],
+.login input[type="email"],
+.login select {
+	background: #ffffff;
+	border: 1px solid #808080;
+	border-radius: 4px;
+	box-shadow: none;
+	color: #000000;
+	font-size: 18px;
+	line-height: 1.4;
+	min-height: 44px;
+	padding: 8px 10px;
+}
+
+.login input[type="checkbox"] {
+	border-color: #808080;
+	box-shadow: none;
+}
+
+.login input[type="checkbox"]:checked::before {
+	filter: brightness(0);
+}
+
+.login input[type="text"]:focus,
+.login input[type="password"]:focus,
+.login input[type="email"]:focus,
+.login input[type="checkbox"]:focus,
+.login select:focus,
+.login .button.wp-hide-pw:focus {
+	border-color: #47ef03;
+	box-shadow: 0 0 0 2px rgba(71, 239, 3, 0.3);
+	outline: 2px solid transparent;
+}
+
+.login .button.wp-hide-pw {
+	color: #0e7814;
+	min-height: 44px;
+}
+
+.login .button.wp-hide-pw:hover,
+.login .button.wp-hide-pw:focus {
+	color: #000000;
+}
+
+.wp-core-ui.login .button-primary {
+	background: #47ef03;
+	border-color: #47ef03;
+	border-radius: 4px;
+	box-shadow: none;
+	color: #000000;
+	font-weight: 700;
+	min-height: 44px;
+	padding: 0 18px;
+	text-shadow: none;
+}
+
+.wp-core-ui.login .button-primary:hover,
+.wp-core-ui.login .button-primary:focus {
+	background: #0e7814;
+	border-color: #0e7814;
+	color: #ffffff;
+}
+
+.wp-core-ui.login .button-primary:focus {
+	box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #47ef03;
+	outline: 2px solid transparent;
+}
+
+.wp-core-ui.login .button-primary:disabled,
+.wp-core-ui.login .button-primary.disabled,
+.wp-core-ui.login .button-primary.button-primary-disabled {
+	background: #d9d9d9 !important;
+	border-color: #b8b8b8 !important;
+	color: #555555 !important;
+}
+
+.login #nav,
+.login #backtoblog,
+.login .privacy-policy-page-link {
+	color: #d8d8d8;
+	text-align: center;
+}
+
+.login #nav a,
+.login #backtoblog a,
+.login .privacy-policy-page-link a {
+	color: #d8d8d8;
+}
+
+.login #nav a:hover,
+.login #nav a:focus,
+.login #backtoblog a:hover,
+.login #backtoblog a:focus,
+.login .privacy-policy-page-link a:hover,
+.login .privacy-policy-page-link a:focus {
+	color: #47ef03;
+	box-shadow: none;
+	outline: 2px solid #c044e4;
+	outline-offset: 2px;
+}
+
+.login .message,
+.login .notice,
+.login .success {
+	border-left-color: #0e7814;
+	color: #1d1d1d;
+}
+
+.login #login_error,
+.login .notice-error {
+	border-left-color: #d63638;
+	color: #1d1d1d;
+}
+
+.login .message a,
+.login .notice a,
+.login #login_error a {
+	color: #0e7814;
+}
+
+.login .language-switcher {
+	color: #f5f5f5;
+}
+
+.login .language-switcher label {
+	color: #f5f5f5;
+}
+
+.login .language-switcher select {
+	max-width: 100%;
+}
+
+@media (max-width: 430px) {
+	.login #login {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+
+	.login h1 a {
+		height: 76px;
+		max-width: 220px;
+	}
+
+	.login form {
+		padding: 22px 18px 24px;
+	}
+
+	.wp-core-ui.login .button-primary {
+		width: 100%;
+	}
+}
