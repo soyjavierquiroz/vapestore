@@ -109,6 +109,154 @@ function vapestore_loop_product_brand() {
 add_action( 'woocommerce_shop_loop_item_title', 'vapestore_loop_product_brand', 9 );
 
 /**
+ * Get the public Shop by Brand directory URL.
+ *
+ * @return string
+ */
+function vapestore_get_brand_directory_url() {
+	return home_url( '/shop-by-brand/' );
+}
+
+/**
+ * Get non-empty native WooCommerce product brand terms.
+ *
+ * @param array<string, mixed> $args Optional get_terms arguments.
+ * @return WP_Term[]
+ */
+function vapestore_get_product_brand_terms( $args = array() ) {
+	if ( ! taxonomy_exists( 'product_brand' ) ) {
+		return array();
+	}
+
+	$brands = get_terms(
+		wp_parse_args(
+			$args,
+			array(
+				'taxonomy'   => 'product_brand',
+				'hide_empty' => true,
+				'orderby'    => 'name',
+				'order'      => 'ASC',
+			)
+		)
+	);
+
+	if ( is_wp_error( $brands ) || ! is_array( $brands ) ) {
+		return array();
+	}
+
+	return array_values(
+		array_filter(
+			$brands,
+			static function ( $brand ) {
+				return $brand instanceof WP_Term && $brand->count > 0;
+			}
+		)
+	);
+}
+
+/**
+ * Get the number of non-empty native WooCommerce product brand terms.
+ *
+ * @return int
+ */
+function vapestore_get_product_brand_count() {
+	if ( ! taxonomy_exists( 'product_brand' ) ) {
+		return 0;
+	}
+
+	$count = get_terms(
+		array(
+			'taxonomy'   => 'product_brand',
+			'hide_empty' => true,
+			'fields'     => 'count',
+		)
+	);
+
+	return is_wp_error( $count ) ? 0 : (int) $count;
+}
+
+/**
+ * Render one native product brand card.
+ *
+ * @param WP_Term $brand Product brand term.
+ * @return void
+ */
+function vapestore_render_brand_card( $brand ) {
+	if ( ! $brand instanceof WP_Term ) {
+		return;
+	}
+
+	$link = get_term_link( $brand, 'product_brand' );
+
+	if ( is_wp_error( $link ) ) {
+		return;
+	}
+	?>
+	<a class="vapestore-brand-card" href="<?php echo esc_url( $link ); ?>">
+		<span class="vapestore-brand-card__name"><?php echo esc_html( $brand->name ); ?></span>
+		<span class="vapestore-brand-card__count">
+			<?php echo esc_html( sprintf( _n( '%s product', '%s products', $brand->count, 'vapestore' ), number_format_i18n( $brand->count ) ) ); ?>
+		</span>
+		<span class="vapestore-brand-card__action"><?php esc_html_e( 'View products', 'vapestore' ); ?> &rarr;</span>
+	</a>
+	<?php
+}
+
+/**
+ * Render a grid of native product brand cards.
+ *
+ * @param WP_Term[] $brands Product brand terms.
+ * @return void
+ */
+function vapestore_render_brand_grid( $brands ) {
+	if ( empty( $brands ) || ! is_array( $brands ) ) {
+		return;
+	}
+	?>
+	<div class="vapestore-brand-grid">
+		<?php foreach ( $brands as $brand ) : ?>
+			<?php vapestore_render_brand_card( $brand ); ?>
+		<?php endforeach; ?>
+	</div>
+	<?php
+}
+
+/**
+ * Determine whether the current request is for the virtual brand directory.
+ *
+ * @return bool
+ */
+function vapestore_is_shop_by_brand_request() {
+	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+	$request_path = wp_parse_url( $request_uri, PHP_URL_PATH );
+
+	return 'shop-by-brand' === trim( (string) $request_path, '/' );
+}
+
+/**
+ * Serve the lightweight brand directory without creating a persistent Page record.
+ *
+ * @return void
+ */
+function vapestore_render_shop_by_brand_directory() {
+	if ( ! vapestore_is_shop_by_brand_request() ) {
+		return;
+	}
+
+	global $wp_query;
+
+	if ( $wp_query instanceof WP_Query ) {
+		$wp_query->is_404 = false;
+		$wp_query->is_page = true;
+	}
+
+	status_header( 200 );
+	require get_template_directory() . '/shop-by-brand.php';
+	exit;
+}
+add_action( 'template_redirect', 'vapestore_render_shop_by_brand_directory', 0 );
+
+/**
  * Register theme Customizer settings.
  *
  * @param WP_Customize_Manager $wp_customize Customizer manager.

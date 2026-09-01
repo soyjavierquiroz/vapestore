@@ -99,6 +99,13 @@ $new_products = function_exists( 'wc_get_products' )
 		)
 	)
 	: array();
+
+$home_brands = vapestore_get_product_brand_terms(
+	array(
+		'number' => 8,
+	)
+);
+$brand_count = vapestore_get_product_brand_count();
 ?>
 
 <main class="home">
@@ -173,6 +180,20 @@ $new_products = function_exists( 'wc_get_products' )
 			<?php endif; ?>
 		</div>
 	</section>
+
+	<?php if ( ! empty( $home_brands ) ) : ?>
+		<section class="home-section home-brands">
+			<div class="container">
+				<div class="home-section__heading">
+					<h2><?php esc_html_e( 'Shop by Brand', 'vapestore' ); ?></h2>
+					<?php if ( $brand_count > 8 ) : ?>
+						<a href="<?php echo esc_url( vapestore_get_brand_directory_url() ); ?>"><?php esc_html_e( 'View all brands', 'vapestore' ); ?></a>
+					<?php endif; ?>
+				</div>
+				<?php vapestore_render_brand_grid( $home_brands ); ?>
+			</div>
+		</section>
+	<?php endif; ?>
 
 	<section class="home-section home-products">
 		<div class="container">

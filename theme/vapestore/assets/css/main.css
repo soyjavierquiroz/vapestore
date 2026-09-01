@@ -608,6 +608,72 @@ a {
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.vapestore-brand-grid {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.vapestore-brand-card {
+	background: var(--brand-white);
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	color: var(--text);
+	display: flex;
+	flex-direction: column;
+	font-weight: 700;
+	gap: 8px;
+	min-height: 148px;
+	padding: 18px;
+	text-decoration: none;
+	transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.vapestore-brand-card:hover,
+.vapestore-brand-card:focus {
+	border-color: var(--accent);
+	transform: translateY(-2px);
+	text-decoration: none;
+}
+
+.vapestore-brand-card:focus-visible {
+	outline: 2px solid var(--brand-purple);
+	outline-offset: 2px;
+}
+
+.vapestore-brand-card__name {
+	overflow-wrap: anywhere;
+}
+
+.vapestore-brand-card__count {
+	color: var(--muted);
+	font-size: 0.9rem;
+	font-weight: 500;
+}
+
+.vapestore-brand-card__action {
+	color: var(--accent-hover);
+	font-size: 0.9rem;
+	margin-top: auto;
+}
+
+.brand-directory__header {
+	max-width: 760px;
+	padding-bottom: 24px;
+}
+
+.brand-directory__header h1 {
+	font-size: clamp(2rem, 5vw, 3rem);
+	line-height: 1.1;
+	margin: 0 0 12px;
+}
+
+.brand-directory__header p,
+.brand-directory__empty {
+	color: var(--muted);
+	margin: 0;
+}
+
 .home-category {
 	border: 1px solid var(--border);
 	border-radius: 6px;
@@ -769,7 +835,8 @@ a {
 }
 
 .post-type-archive-product.woocommerce ul.products,
-.tax-product_cat.woocommerce ul.products {
+.tax-product_cat.woocommerce ul.products,
+.tax-product_brand.woocommerce ul.products {
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
@@ -2513,6 +2580,7 @@ a {
 
 	.home-benefits__grid,
 	.home-categories__grid,
+	.vapestore-brand-grid,
 	.site-footer__grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
@@ -2574,7 +2642,8 @@ a {
 @media (max-width: 699px) {
 	.woocommerce ul.products,
 	.post-type-archive-product.woocommerce ul.products,
-	.tax-product_cat.woocommerce ul.products {
+	.tax-product_cat.woocommerce ul.products,
+	.tax-product_brand.woocommerce ul.products {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
@@ -2595,6 +2664,15 @@ a {
 	.home-categories__grid,
 	.site-footer__grid {
 		grid-template-columns: 1fr;
+	}
+
+	.vapestore-brand-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.vapestore-brand-card {
+		min-height: 132px;
+		padding: 14px;
 	}
 
 	.home-benefit {
@@ -2733,7 +2811,8 @@ a {
 @media (max-width: 379px) {
 	.woocommerce ul.products,
 	.post-type-archive-product.woocommerce ul.products,
-	.tax-product_cat.woocommerce ul.products {
+	.tax-product_cat.woocommerce ul.products,
+	.tax-product_brand.woocommerce ul.products {
 		grid-template-columns: 1fr;
 	}
 
