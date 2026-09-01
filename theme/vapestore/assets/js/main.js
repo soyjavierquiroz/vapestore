@@ -3,6 +3,7 @@
 
 	document.addEventListener('DOMContentLoaded', function () {
 		initNavigation();
+		initProductSearchAutocomplete();
 		initRecentlyViewed();
 	});
 
@@ -51,6 +52,191 @@
 			toggle.setAttribute('aria-expanded', String(!isExpanded));
 			navigation.classList.toggle('is-open', !isExpanded);
 		});
+	}
+
+	function initProductSearchAutocomplete() {
+		var settings = window.vapestoreProductSearch || {};
+		var form = document.querySelector('.product-search form.woocommerce-product-search');
+		var input = form ? form.querySelector('input[type="search"][name="s"], .search-field[name="s"]') : null;
+		var minLength = toPositiveInteger(settings.minLength) || 2;
+		var limit = Math.min(5, toPositiveInteger(settings.limit) || 5);
+		var debounceTimer = null;
+		var abortController = null;
+		var lastQuery = '';
+		var dropdown;
+		var resultsList;
+		var status;
+
+		if (!form || !input || !settings.endpoint || typeof window.fetch !== 'function') {
+			return;
+		}
+
+		form.classList.add('vapestore-search-autocomplete');
+		input.setAttribute('autocomplete', 'off');
+		input.setAttribute('aria-expanded', 'false');
+
+		dropdown = document.createElement('div');
+		dropdown.className = 'vapestore-search-autocomplete__dropdown';
+		dropdown.hidden = true;
+
+		status = document.createElement('div');
+		status.className = 'vapestore-search-autocomplete__status';
+		status.setAttribute('aria-live', 'polite');
+
+		resultsList = document.createElement('div');
+		resultsList.className = 'vapestore-search-autocomplete__results';
+
+		dropdown.appendChild(status);
+		dropdown.appendChild(resultsList);
+		form.appendChild(dropdown);
+
+		input.addEventListener('input', function () {
+			var query = input.value.trim();
+
+			window.clearTimeout(debounceTimer);
+
+			if (query.length < minLength) {
+				closeDropdown();
+				abortSearch();
+				return;
+			}
+
+			debounceTimer = window.setTimeout(function () {
+				searchProducts(query);
+			}, 300);
+		});
+
+		input.addEventListener('keydown', function (event) {
+			if (event.key === 'Escape') {
+				closeDropdown();
+			}
+		});
+
+		document.addEventListener('click', function (event) {
+			if (!form.contains(event.target)) {
+				closeDropdown();
+			}
+		});
+
+		form.addEventListener('submit', function () {
+			closeDropdown();
+		});
+
+		function searchProducts(query) {
+			var url = settings.endpoint + '?q=' + encodeURIComponent(query) + '&limit=' + encodeURIComponent(limit);
+
+			abortSearch();
+			lastQuery = query;
+			abortController = window.AbortController ? new window.AbortController() : null;
+			showStatus(settings.loading || 'Searching...');
+
+			window.fetch(url, {
+				credentials: 'same-origin',
+				signal: abortController ? abortController.signal : undefined
+			})
+				.then(function (response) {
+					if (!response.ok) {
+						throw new Error('Product search request failed.');
+					}
+
+					return response.json();
+				})
+				.then(function (data) {
+					if (query !== lastQuery || input.value.trim() !== query) {
+						return;
+					}
+
+					renderResults(Array.isArray(data.products) ? data.products.slice(0, limit) : [], query);
+				})
+				.catch(function (error) {
+					if (error && error.name === 'AbortError') {
+						return;
+					}
+
+					closeDropdown();
+				});
+		}
+
+		function renderResults(products, query) {
+			status.textContent = '';
+			resultsList.innerHTML = '';
+
+			if (!products.length) {
+				showStatus(settings.noResults || 'No products found');
+				appendViewAll(query);
+				return;
+			}
+
+			products.forEach(function (product) {
+				var link = document.createElement('a');
+				var image = document.createElement('img');
+				var text = document.createElement('span');
+				var name = document.createElement('span');
+				var price = document.createElement('span');
+
+				link.className = 'vapestore-search-autocomplete__item';
+				link.href = product.permalink || form.action || '/';
+
+				image.className = 'vapestore-search-autocomplete__image';
+				image.alt = '';
+				image.loading = 'lazy';
+				image.src = product.thumbnail || '';
+
+				text.className = 'vapestore-search-autocomplete__text';
+				name.className = 'vapestore-search-autocomplete__name';
+				name.textContent = product.name || '';
+				price.className = 'vapestore-search-autocomplete__price';
+				price.innerHTML = product.price || '';
+
+				text.appendChild(name);
+				text.appendChild(price);
+				link.appendChild(image);
+				link.appendChild(text);
+				resultsList.appendChild(link);
+			});
+
+			appendViewAll(query);
+			openDropdown();
+		}
+
+		function appendViewAll(query) {
+			var link = document.createElement('a');
+			var searchUrl = new URL(form.action || window.location.href, window.location.href);
+
+			searchUrl.searchParams.set(input.name || 's', query);
+			searchUrl.searchParams.set('post_type', 'product');
+
+			link.className = 'vapestore-search-autocomplete__view-all';
+			link.href = searchUrl.toString();
+			link.textContent = settings.viewAll || 'View all results';
+			resultsList.appendChild(link);
+			openDropdown();
+		}
+
+		function showStatus(message) {
+			status.textContent = message;
+			resultsList.innerHTML = '';
+			openDropdown();
+		}
+
+		function openDropdown() {
+			dropdown.hidden = false;
+			input.setAttribute('aria-expanded', 'true');
+		}
+
+		function closeDropdown() {
+			dropdown.hidden = true;
+			input.setAttribute('aria-expanded', 'false');
+			status.textContent = '';
+			resultsList.innerHTML = '';
+		}
+
+		function abortSearch() {
+			if (abortController) {
+				abortController.abort();
+				abortController = null;
+			}
+		}
 	}
 
 	function initRecentlyViewed() {
@@ -154,5 +340,11 @@
 
 			return integer > 0 ? integer : 0;
 		}
+	}
+
+	function toPositiveInteger(value) {
+		var integer = parseInt(value, 10);
+
+		return integer > 0 ? integer : 0;
 	}
 })();

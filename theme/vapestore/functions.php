@@ -72,6 +72,15 @@ function vapestore_enqueue_assets() {
 				'endpoint'         => esc_url_raw( rest_url( 'vapestore/v1/recently-viewed' ) ),
 				'currentProductId' => absint( $product_id ),
 			)
+		) . '; window.vapestoreProductSearch = ' . wp_json_encode(
+			array(
+				'endpoint'   => esc_url_raw( rest_url( 'vapestore/v1/product-search' ) ),
+				'minLength'  => 2,
+				'limit'      => 5,
+				'noResults'  => __( 'No products found', 'vapestore' ),
+				'viewAll'    => __( 'View all results', 'vapestore' ),
+				'loading'    => __( 'Searching...', 'vapestore' ),
+			)
 		) . ';',
 		'before'
 	);
@@ -347,6 +356,108 @@ function vapestore_cart_count_fragment( $fragments ) {
 	return $fragments;
 }
 add_filter( 'woocommerce_add_to_cart_fragments', 'vapestore_cart_count_fragment' );
+
+/**
+ * Register the public product search autocomplete endpoint.
+ */
+function vapestore_register_product_search_route() {
+	register_rest_route(
+		'vapestore/v1',
+		'/product-search',
+		array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => 'vapestore_rest_product_search',
+			'permission_callback' => '__return_true',
+			'args'                => array(
+				'q'     => array(
+					'type'              => 'string',
+					'required'          => true,
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				'limit' => array(
+					'type'              => 'integer',
+					'default'           => 5,
+					'sanitize_callback' => 'absint',
+				),
+			),
+		)
+	);
+}
+add_action( 'rest_api_init', 'vapestore_register_product_search_route' );
+
+/**
+ * Return minimal public product data for header autocomplete.
+ *
+ * @param WP_REST_Request $request REST request.
+ * @return WP_REST_Response
+ */
+function vapestore_rest_product_search( $request ) {
+	if ( ! function_exists( 'wc_get_product' ) ) {
+		return rest_ensure_response( array( 'products' => array() ) );
+	}
+
+	$query = trim( sanitize_text_field( (string) $request->get_param( 'q' ) ) );
+	$limit = min( 5, max( 1, absint( $request->get_param( 'limit' ) ) ) );
+
+	if ( strlen( $query ) < 2 ) {
+		return rest_ensure_response( array( 'products' => array() ) );
+	}
+
+	$visibility_terms = function_exists( 'wc_get_product_visibility_term_ids' ) ? wc_get_product_visibility_term_ids() : array();
+	$tax_query        = array(); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+
+	if ( ! empty( $visibility_terms['exclude-from-search'] ) ) {
+		$tax_query[] = array(
+			'taxonomy' => 'product_visibility',
+			'field'    => 'term_taxonomy_id',
+			'terms'    => array( absint( $visibility_terms['exclude-from-search'] ) ),
+			'operator' => 'NOT IN',
+		);
+	}
+
+	$product_query = new WP_Query(
+		array(
+			'post_type'              => 'product',
+			'post_status'            => 'publish',
+			's'                      => $query,
+			'posts_per_page'         => $limit,
+			'fields'                 => 'ids',
+			'no_found_rows'          => true,
+			'ignore_sticky_posts'    => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+			'tax_query'              => $tax_query,
+		)
+	);
+
+	$products = array();
+
+	foreach ( $product_query->posts as $product_id ) {
+		$product = wc_get_product( $product_id );
+
+		if ( ! $product instanceof WC_Product || ! $product->is_visible() ) {
+			continue;
+		}
+
+		$thumbnail = get_the_post_thumbnail_url( $product->get_id(), 'woocommerce_thumbnail' );
+
+		if ( ! $thumbnail && function_exists( 'wc_placeholder_img_src' ) ) {
+			$thumbnail = wc_placeholder_img_src( 'woocommerce_thumbnail' );
+		}
+
+		$products[] = array(
+			'id'        => $product->get_id(),
+			'name'      => wp_strip_all_tags( $product->get_name() ),
+			'permalink' => get_permalink( $product->get_id() ),
+			'thumbnail' => $thumbnail ? esc_url_raw( $thumbnail ) : '',
+			'price'     => wp_kses_post( $product->get_price_html() ),
+		);
+	}
+
+	wp_reset_postdata();
+
+	return rest_ensure_response( array( 'products' => $products ) );
+}
 
 /**
  * Register the public recently viewed product card endpoint.
