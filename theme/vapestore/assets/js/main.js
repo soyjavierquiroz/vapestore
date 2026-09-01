@@ -63,6 +63,7 @@
 		var debounceTimer = null;
 		var abortController = null;
 		var lastQuery = '';
+		var activeQuery = '';
 		var dropdown;
 		var resultsList;
 		var status;
@@ -125,7 +126,12 @@
 		function searchProducts(query) {
 			var url = settings.endpoint + '?q=' + encodeURIComponent(query) + '&limit=' + encodeURIComponent(limit);
 
+			if (query === activeQuery) {
+				return;
+			}
+
 			abortSearch();
+			activeQuery = query;
 			lastQuery = query;
 			abortController = window.AbortController ? new window.AbortController() : null;
 			showStatus(settings.loading || 'Searching...');
@@ -154,6 +160,11 @@
 					}
 
 					closeDropdown();
+				})
+				.finally(function () {
+					if (query === activeQuery) {
+						activeQuery = '';
+					}
 				});
 		}
 
@@ -236,6 +247,7 @@
 				abortController.abort();
 				abortController = null;
 			}
+			activeQuery = '';
 		}
 	}
 
@@ -244,7 +256,14 @@
 		var settings = window.vapestoreRecentlyViewed || {};
 		var currentProductId = toPositiveInteger(settings.currentProductId);
 		var placeholders = document.querySelectorAll('[data-vapestore-recently-viewed]');
-		var history = readHistory();
+		var history;
+		var fetchedUrls = [];
+
+		if (!currentProductId && !placeholders.length) {
+			return;
+		}
+
+		history = readHistory();
 
 		if (currentProductId) {
 			history = normalizeIds([currentProductId].concat(history)).slice(0, 8);
@@ -268,6 +287,12 @@
 			}
 
 			url = settings.endpoint + '?ids=' + encodeURIComponent(productIds.join(',')) + '&limit=' + encodeURIComponent(limit);
+
+			if (fetchedUrls.indexOf(url) !== -1) {
+				return;
+			}
+
+			fetchedUrls.push(url);
 
 			window.fetch(url, { credentials: 'same-origin' })
 				.then(function (response) {
