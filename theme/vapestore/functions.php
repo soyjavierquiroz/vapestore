@@ -243,6 +243,75 @@ function vapestore_is_shop_by_brand_request() {
 }
 
 /**
+ * Use a meaningful document title for the virtual brand directory.
+ *
+ * @param array<string, string> $title Document title parts.
+ * @return array<string, string>
+ */
+function vapestore_shop_by_brand_document_title( $title ) {
+	if ( ! vapestore_is_shop_by_brand_request() ) {
+		return $title;
+	}
+
+	$title['title'] = __( 'Shop by Brand', 'vapestore' );
+
+	return $title;
+}
+add_filter( 'document_title_parts', 'vapestore_shop_by_brand_document_title' );
+
+/**
+ * Keep error responses out of the index while preserving normal catalog pages.
+ *
+ * @param array<string, bool|string> $robots Robots directives.
+ * @return array<string, bool|string>
+ */
+function vapestore_noindex_404_pages( $robots ) {
+	if ( ! is_404() ) {
+		return $robots;
+	}
+
+	$robots['noindex'] = true;
+	$robots['follow']  = true;
+
+	return $robots;
+}
+add_filter( 'wp_robots', 'vapestore_noindex_404_pages' );
+
+/**
+ * Add canonical URLs only where WordPress core does not output one.
+ */
+function vapestore_output_archive_canonical() {
+	$paged = max( 1, absint( get_query_var( 'paged' ) ) );
+
+	if ( vapestore_is_shop_by_brand_request() ) {
+		$canonical = vapestore_get_brand_directory_url();
+	} elseif ( function_exists( 'is_shop' ) && is_shop() ) {
+		$canonical = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : get_post_type_archive_link( 'product' );
+	} elseif ( function_exists( 'is_product_taxonomy' ) && is_product_taxonomy() ) {
+		$queried = get_queried_object();
+
+		if ( ! $queried instanceof WP_Term ) {
+			return;
+		}
+
+		$canonical = get_term_link( $queried );
+	} else {
+		return;
+	}
+
+	if ( is_wp_error( $canonical ) || empty( $canonical ) ) {
+		return;
+	}
+
+	if ( $paged > 1 ) {
+		$canonical = get_pagenum_link( $paged );
+	}
+
+	printf( '<link rel="canonical" href="%s" />' . "\n", esc_url( $canonical ) );
+}
+add_action( 'wp_head', 'vapestore_output_archive_canonical' );
+
+/**
  * Serve the lightweight brand directory without creating a persistent Page record.
  *
  * @return void
