@@ -505,6 +505,23 @@ a {
 	margin-top: 1.1em;
 }
 
+.page-content h2,
+.page-content h3 {
+	line-height: 1.2;
+	margin-bottom: 0.45em;
+	margin-top: 1.6em;
+}
+
+.page-content p,
+.page-content li {
+	font-size: 1rem;
+}
+
+.page-content ul,
+.page-content ol {
+	padding-left: 1.35em;
+}
+
 .button {
 	align-items: center;
 	display: inline-flex;
@@ -2467,7 +2484,7 @@ a {
 .site-footer__grid {
 	display: grid;
 	gap: 28px;
-	grid-template-columns: minmax(240px, 1fr) minmax(160px, 0.7fr) minmax(160px, 0.7fr);
+	grid-template-columns: minmax(220px, 1.1fr) repeat(3, minmax(150px, 0.7fr));
 }
 
 .site-footer h2 {
